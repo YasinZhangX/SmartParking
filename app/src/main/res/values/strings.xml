@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">智能停车场</string>
+    <string name="title_home">网络设置</string>
+    <string name="title_dashboard">WIFI信号</string>
+    <string name="title_notifications">同步数据</string>
+    <string name="init_tips">提示信息：请先打开wifi再连接网络</string>
+    <string name="button_send">刷新</string>
+    <string name="text">输入一条信息</string>
+    <string name="desc1">image_desc</string>
+    <string name="desc2">image_desc</string>
+    <string name="desc3">image_desc</string>
+    <string name="desc4">image_desc</string>
+    <string name="desc5">image_desc</string>
+    <string name="desc6">image_desc</string>
+    <string name="desc7">image_desc</string>
+    <string name="desc8">image_desc</string>
+    <string name="car_status_no">Statue:无车</string>
+    <string name="car_status_yes">Statue:有车</string>
+    <string name="IPAddressError">IP地址不合法，请重新设置</string>
+    <string name="IP_Tag">服务器IP地址:</string>
+    <string name="Default_IP">192.168.4.1</string>
+</resources>
