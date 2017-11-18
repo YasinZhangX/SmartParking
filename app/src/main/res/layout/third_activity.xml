@@ -7,19 +7,41 @@
     android:layout_height="fill_parent"
     android:weightSum="1">
 
-<EditText android:id="@+id/text"
+    <EditText
+        android:id="@+id/text"
 
-    android:editable="false"
-    android:layout_width="fill_parent"
-    android:layout_height="176dp"
-    android:layout_weight="0.99" />
+        android:layout_width="fill_parent"
+        android:layout_height="176dp"
+        android:layout_weight="0.99"
+        android:editable="false" />
 
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="71dp"
-        android:onClick="sendMessage"
-        android:text="@string/button_send" />
+        <Button
+            android:id="@+id/button1"
+            android:layout_width="wrap_content"
+            android:layout_height="71dp"
+            android:onClick="scanWifiInfo"
+            android:text="@string/button_fresh" />
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="wrap_content"
+            android:layout_height="71dp"
+            android:onClick="clearMapInfo"
+            android:text="@string/button_clearInfo" />
+
+        <Button
+            android:id="@+id/button3"
+            android:layout_width="wrap_content"
+            android:layout_height="71dp"
+            android:onClick="clearTable"
+            android:text="@string/button_clearTable" />
+
+    </LinearLayout>
+
 
 </LinearLayout>
