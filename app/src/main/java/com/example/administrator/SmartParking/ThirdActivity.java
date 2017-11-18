@@ -1,10 +1,11 @@
 package com.example.administrator.SmartParking;
 
-import java.sql.SQLData;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -15,6 +16,8 @@ import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -27,6 +30,9 @@ public class ThirdActivity extends Activity {
     //Wi-Fi管理器
     private WifiManager mMgr = null;
     private FooWifiMonitor mMonitor = null;
+    //定时器
+    Timer timer = null;
+    TimerTask task = null;
     //扫描次数
     private int times = 0;
     private float alpha = (float) 0.75;
@@ -114,25 +120,32 @@ public class ThirdActivity extends Activity {
         ((EditText) findViewById(R.id.text)).append(text + "\n");
     }
 
-    public void scanWifiInfo(View view) {
-        mMgr.startScan();
+    public void startScan(View view) {
+        startTimer();
+    }
+
+    public void scanWifiInfo() {
         if (times == 5) {
+            stopTimer();
             times = 1;
             macInfo.macSet = Wifi.addList((SmartParkingApplication)getApplication(), wifiMap, macInfo.macSet);
             if (macInfo.columCount == 0)
                 if (macInfo.addList((SmartParkingApplication)getApplication(), macInfo.macSet))
                     macInfo.columCount++;
-        }
-        else
+        } else {
+            mMgr.startScan();
             times++;
+        }
     }
 
+    //清空Map
     public void clearMapInfo(View view) {
         times = 1;
         wifiMap.clear();
         Toast.makeText(ThirdActivity.this, "wifiMap已清空", Toast.LENGTH_SHORT).show();
     }
 
+    //清空表格
     public void clearTable(View view) {
         SQLiteHelper helper = ((SmartParkingApplication)getApplication()).getSQLiteHelper();
         SQLiteDatabase database = helper.getWritableDatabase();
@@ -142,6 +155,50 @@ public class ThirdActivity extends Activity {
         database.close();
         Toast.makeText(ThirdActivity.this, "table已清空", Toast.LENGTH_SHORT).show();
     }
+
+    @SuppressLint("HandlerLeak")
+    Handler handler = new Handler() {
+        public void handleMessage(Message msg) {
+            if (msg.what == 1) {
+                scanWifiInfo();
+            }
+            super.handleMessage(msg);
+        };
+    };
+
+    private void startTimer() {
+        if (timer == null) {
+            timer = new Timer();
+        }
+
+        if (task == null) {
+            task = new TimerTask() {
+                @Override
+                public void run() {
+                    // 需要做的事:发送消息
+                    Message message = new Message();
+                    message.what = 1;
+                    handler.sendMessage(message);
+                }
+            };
+        }
+
+        if(timer != null && task != null )
+            timer.schedule(task, 500, 3000);
+    }
+
+    private void stopTimer() {
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+
+        if (task != null) {
+            task.cancel();
+            task = null;
+        }
+    }
+
 }
 
 
