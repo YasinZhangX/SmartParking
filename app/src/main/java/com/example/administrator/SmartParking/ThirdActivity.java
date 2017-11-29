@@ -18,6 +18,7 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -34,6 +35,9 @@ public class ThirdActivity extends Activity {
     Timer timer = null;
     TimerTask task = null;
     //扫描次数
+    private int id = 1;
+    private long exitTime = 0;
+    private long clearTableTime = 0;
     private int times = 0;
     private float alpha = (float) 0.75;
     private HashMap<String, Wifi> wifiMap = new HashMap<>();
@@ -43,7 +47,6 @@ public class ThirdActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);  //Activity 的生命周期
         setContentView(R.layout.third_activity);   //界面
-        Intent intent = getIntent();
         //初始化
         init();
     }
@@ -77,6 +80,25 @@ public class ThirdActivity extends Activity {
         this.unregisterReceiver(mMonitor);
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            exit();
+            return false;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    public void exit() {
+        if ((System.currentTimeMillis() - exitTime) > 2000) {
+            Toast.makeText(getApplicationContext(), "再按一次退出",
+                    Toast.LENGTH_SHORT).show();
+            exitTime = System.currentTimeMillis();
+        } else {
+            finish();
+        }
+    }
+
     class FooWifiMonitor extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -85,7 +107,7 @@ public class ThirdActivity extends Activity {
             List<ScanResult> results = mMgr.getScanResults();
             if (results != null) {
                 for (ScanResult result : results) {
-                    //if (result.SSID.hashCode() == "SCUNET".hashCode()) {
+                    if (result.SSID.contains("mTest")) {
                         if (wifiMap.keySet().contains(result.BSSID)) {
                             wifiMap.get(result.BSSID).rssi = alpha * result.level +
                                     (1-alpha) * wifiMap.get(result.BSSID).rssi;
@@ -96,7 +118,7 @@ public class ThirdActivity extends Activity {
                             wifi.rssi = result.level;
                             wifiMap.put(wifi.MAC, wifi);
                         }
-                    //}
+                    }
                 }
 //                for (int j = 0; j < results.size(); ++j) {
 //                    if (results.get(j).SSID.contains("319"))
@@ -106,14 +128,14 @@ public class ThirdActivity extends Activity {
         }
 
 
-        private String getScanResult(ScanResult scanResult) {
-            StringBuffer sb = new StringBuffer("\nSSID：" + scanResult.SSID);
-            sb.append("\nMAC：" + scanResult.BSSID);
-            sb.append("\n性能" + scanResult.capabilities);
-            sb.append("\n频率" + scanResult.frequency + " MHz");
-            sb.append("\n信号等级" + scanResult.level + " dBm");
-            return (sb.toString());
-        }
+//        private String getScanResult(ScanResult scanResult) {
+//            StringBuffer sb = new StringBuffer("\nSSID：" + scanResult.SSID);
+//            sb.append("\nMAC：" + scanResult.BSSID);
+//            sb.append("\n性能" + scanResult.capabilities);
+//            sb.append("\n频率" + scanResult.frequency + " MHz");
+//            sb.append("\n信号等级" + scanResult.level + " dBm");
+//            return (sb.toString());
+//        }
     }
 
     private void print(String text) {
@@ -125,10 +147,12 @@ public class ThirdActivity extends Activity {
     }
 
     public void scanWifiInfo() {
-        if (times == 5) {
+        if (times == 20) {
             stopTimer();
             times = 1;
             macInfo.macSet = Wifi.addList((SmartParkingApplication)getApplication(), wifiMap, macInfo.macSet);
+            print("ID" + id);
+            id++;
             if (macInfo.columCount == 0)
                 if (macInfo.addList((SmartParkingApplication)getApplication(), macInfo.macSet))
                     macInfo.columCount++;
@@ -147,13 +171,20 @@ public class ThirdActivity extends Activity {
 
     //清空表格
     public void clearTable(View view) {
-        SQLiteHelper helper = ((SmartParkingApplication)getApplication()).getSQLiteHelper();
-        SQLiteDatabase database = helper.getWritableDatabase();
-        Wifi.drop(database);
-        MacInfo.drop(database);
-        helper.onCreate(database);
-        database.close();
-        Toast.makeText(ThirdActivity.this, "table已清空", Toast.LENGTH_SHORT).show();
+        if ((System.currentTimeMillis() - clearTableTime) > 2000) {
+            Toast.makeText(getApplicationContext(), "再按一次清空表",
+                    Toast.LENGTH_SHORT).show();
+            clearTableTime = System.currentTimeMillis();
+        } else {
+            SQLiteHelper helper = ((SmartParkingApplication)getApplication()).getSQLiteHelper();
+            SQLiteDatabase database = helper.getWritableDatabase();
+            Wifi.drop(database);
+            MacInfo.drop(database);
+            helper.onCreate(database);
+            database.close();
+            Toast.makeText(ThirdActivity.this, "table已清空", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     @SuppressLint("HandlerLeak")
@@ -163,7 +194,7 @@ public class ThirdActivity extends Activity {
                 scanWifiInfo();
             }
             super.handleMessage(msg);
-        };
+        }
     };
 
     private void startTimer() {
@@ -183,7 +214,7 @@ public class ThirdActivity extends Activity {
             };
         }
 
-        if(timer != null && task != null )
+        if (timer != null && task != null)
             timer.schedule(task, 500, 3000);
     }
 

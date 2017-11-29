@@ -30,17 +30,7 @@ public class Wifi {
                 + "RSSI3 int not null, "
                 + "RSSI4 int not null, "
                 + "RSSI5 int not null, "
-                + "RSSI6 int not null, "
-                + "RSSI7 int not null, "
-                + "RSSI8 int not null, "
-                + "RSSI9 int not null, "
-                + "RSSI10 int not null, "
-                + "RSSI11 int not null, "
-                + "RSSI12 int not null, "
-                + "RSSI13 int not null, "
-                + "RSSI14 int not null, "
-                + "RSSI15 int not null, "
-                + "RSSI16 int not null );";
+                + "RSSI6 int not null );";
         database.execSQL(createTable);
     }
 
@@ -62,9 +52,9 @@ public class Wifi {
         }
         database.beginTransaction(); //开始事务
         ContentValues values = new ContentValues();//是用map封装的对象，用来存放值
-        values.put("SSID", "SCUNET");
+        values.put("SSID", "TEST");
         for (String mac : macSet) {
-            if (i > 16) {
+            if (i > 6) {
                 removeSet.add(mac);
             } else {
                 Wifi wifi = wifiHashMap.get(mac);
@@ -79,7 +69,7 @@ public class Wifi {
         for (String mac : removeSet) {
             macSet.remove(mac);
         }
-        while (i <= 16) {
+        while (i <= 6) {
             values.put("RSSI" + i, -100);
             i++;
         }

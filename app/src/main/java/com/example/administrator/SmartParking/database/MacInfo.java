@@ -25,17 +25,7 @@ public class MacInfo {
                 + "MAC3 text not null, "
                 + "MAC4 text not null, "
                 + "MAC5 text not null, "
-                + "MAC6 text not null, "
-                + "MAC7 text not null, "
-                + "MAC8 text not null, "
-                + "MAC9 text not null, "
-                + "MAC10 text not null, "
-                + "MAC11 text not null, "
-                + "MAC12 text not null, "
-                + "MAC13 text not null, "
-                + "MAC14 text not null, "
-                + "MAC15 text not null, "
-                + "MAC16 text not null);";
+                + "MAC6 text not null);";
         database.execSQL(createTable);
     }
 
@@ -56,7 +46,7 @@ public class MacInfo {
             values.put("MAC"+ i, mac);
             i++;
         }
-        while (i <= 16) {
+        while (i <= 6) {
             values.put("MAC"+ i, "00:00:00:00:00:00");
             i++;
         }
