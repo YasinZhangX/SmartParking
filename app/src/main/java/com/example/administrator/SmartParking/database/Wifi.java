@@ -1,6 +1,7 @@
 package com.example.administrator.SmartParking.database;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.widget.Toast;
 
@@ -40,11 +41,32 @@ public class Wifi {
         database.execSQL(dropTable);
     }
 
+    public static ArrayList<Integer> getWifiList(SQLiteDatabase database, String _id) {
+        ArrayList<Integer> wifiList = new ArrayList<>();
+        String[] projection = {"_id", "SSID", "RSSI1", "RSSI2", "RSSI3", "RSSI4", "RSSI5", "RSSI6"};
+        String selection = "_id=?";
+        String[] selectionArgs = {String.valueOf(_id)};
+        String sortOrder = "_id ASC";
+        Cursor c = database.query("wifi", projection, selection, selectionArgs,
+                null, null, sortOrder);
+        c.moveToFirst();
+        if (!c.isAfterLast()) {
+            for (int i = 1; i <= 6; i++) {
+                Integer rssi = c.getInt(c.getColumnIndex("RSSI"+i));
+                wifiList.add(rssi);
+            }
+            c.moveToNext();
+        }
+        c.close();
+        return wifiList;
+    }
+
     public static Set<String> addList(SmartParkingApplication application, HashMap<String, Wifi> wifiHashMap,
-                               Set<String> macSet) {
-        int i = 1;
+                                      Set<String> macSet) {
         SQLiteHelper helper = application.getSQLiteHelper();
         SQLiteDatabase database = helper.getWritableDatabase();
+
+        int i = 1;
         HashSet<String> removeSet = new HashSet<>();
 
         if (macSet.size() == 0) {
@@ -63,8 +85,8 @@ public class Wifi {
                 } else {
                     values.put("RSSI" + i, -100);
                 }
+                i++;
             }
-            i++;
         }
         for (String mac : removeSet) {
             macSet.remove(mac);
