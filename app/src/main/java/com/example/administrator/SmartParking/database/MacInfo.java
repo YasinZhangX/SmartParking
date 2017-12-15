@@ -8,6 +8,7 @@ import com.example.administrator.SmartParking.SmartParkingApplication;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Mac Instance
@@ -37,7 +38,7 @@ public class MacInfo {
     }
 
     public static Set<String> getmacSet(SQLiteDatabase database) {
-        Set<String> macSet = new HashSet<>();
+        Set<String> macSet = new TreeSet<>();
         String[] projection = {"_id", "MAC1", "MAC2", "MAC3", "MAC4", "MAC5", "MAC6"};
         String selection = null;
         String[] selectionArgs = null;

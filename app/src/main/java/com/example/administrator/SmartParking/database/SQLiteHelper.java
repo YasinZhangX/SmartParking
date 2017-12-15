@@ -59,29 +59,30 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
     public SQLiteDatabase open() {
         String filePath = DB_PATH + "/" + DATABASE_NAME;
-        try {
-            File file = new File(filePath);
-            if (!file.exists()) { // 判断文件是否存在，通过输入输出流把数据库拷贝到filePath下
-                InputStream inputStream = context.getResources().openRawResource(R.raw.wifiinfo);
-                FileOutputStream fileOutputStream = new FileOutputStream(file);
-                byte[] buffer = new byte[BUFFER_SIZE];
-                int readCount;
-                while ((readCount = inputStream.read(buffer)) > 0) {
-                    fileOutputStream.write(buffer, 0, readCount);
-                }
-                fileOutputStream.close();
-                inputStream.close();
-            }
-            SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase(filePath, null);
+//        try {
+//            File file = new File(filePath);
+//            if (!file.exists()) { // 判断文件是否存在，通过输入输出流把数据库拷贝到filePath下
+//                InputStream inputStream = context.getResources().openRawResource(R.raw.wifiinfo);
+//                FileOutputStream fileOutputStream = new FileOutputStream(file);
+//                byte[] buffer = new byte[BUFFER_SIZE];
+//                int readCount;
+//                while ((readCount = inputStream.read(buffer)) > 0) {
+//                    fileOutputStream.write(buffer, 0, readCount);
+//                }
+//                fileOutputStream.close();
+//                inputStream.close();
+//            }
+            SQLiteDatabase database = getWritableDatabase();
+            //SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase(filePath, null);
             return database;
-        } catch (FileNotFoundException e) {
-            Log.e("Database", "File not found");
-            e.printStackTrace();
-        } catch (IOException e) {
-            Log.e("Database", "IO exception");
-            e.printStackTrace();
-        }
-        return null;
+//        } catch (FileNotFoundException e) {
+//            Log.e("Database", "File not found");
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            Log.e("Database", "IO exception");
+//            e.printStackTrace();
+//        }
+//        return null;
     }
 
     public void create() { open(); }

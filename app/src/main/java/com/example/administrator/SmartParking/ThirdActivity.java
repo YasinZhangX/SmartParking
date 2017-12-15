@@ -167,7 +167,7 @@ public class ThirdActivity extends Activity {
     }
 
     public void scanWifiInfo() {
-        if (times == 2) {
+        if (times == 20) {
             stopTimer();
             times = 1;
             if (continueFlag) {
@@ -371,8 +371,9 @@ public class ThirdActivity extends Activity {
         SQLiteDatabase database = helper.getWritableDatabase();
 
         macInfo.macSet = MacInfo.getmacSet(database);
-        if (macInfo.macSet.size() != 0)
+        if (macInfo.macSet.size() != 0) {
             Toast.makeText(this, "已获取macset", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void readd(View view) {
@@ -393,7 +394,7 @@ public class ThirdActivity extends Activity {
             List<ScanResult> results = mMgr.getScanResults();
             if (results != null) {
                 for (ScanResult result : results) {
-                    if (result.SSID.contains("319")) {
+                    if (result.SSID.contains("mTest")) {
                         if (wifiMap.keySet().contains(result.BSSID)) {
                             wifiMap.get(result.BSSID).rssi = alpha * result.level +
                                     (1-alpha) * wifiMap.get(result.BSSID).rssi;
