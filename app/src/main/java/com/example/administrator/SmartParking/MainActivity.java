@@ -46,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
     //记录用户首次点击返回键的时间
     private long firstTime = 0;
 
+
+
    //按钮导航
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {

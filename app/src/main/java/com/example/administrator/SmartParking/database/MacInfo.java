@@ -1,12 +1,14 @@
 package com.example.administrator.SmartParking.database;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.example.administrator.SmartParking.SmartParkingApplication;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Mac Instance
@@ -35,6 +37,27 @@ public class MacInfo {
         database.execSQL(dropTable);
     }
 
+    public static Set<String> getmacSet(SQLiteDatabase database) {
+        Set<String> macSet = new TreeSet<>();
+        String[] projection = {"_id", "MAC1", "MAC2", "MAC3", "MAC4", "MAC5", "MAC6"};
+        String selection = null;
+        String[] selectionArgs = null;
+        String sortOrder = "_id ASC";
+        Cursor c = database.query("macInfo", projection, selection, selectionArgs,
+                null, null, sortOrder);
+        c.moveToFirst();
+        if (!c.isAfterLast()) {
+            for (int i = 1; i <= 6; i++) {
+                String mac = c.getString(c.getColumnIndex("MAC"+i));
+                if (mac.hashCode() != "00:00:00:00:00:00".hashCode())
+                    macSet.add(mac);
+            }
+            c.moveToNext();
+        }
+        c.close();
+        return macSet;
+    }
+
     public boolean addList(SmartParkingApplication application, Set<String> macSet)
     {
         SQLiteHelper helper = application.getSQLiteHelper();
@@ -52,9 +75,6 @@ public class MacInfo {
         }
         long result = database.insert("macInfo", null, values);
         database.close();
-        if (result == -1)
-            return false;
-        else
-            return true;
+        return (result != -1);
     }
 }
