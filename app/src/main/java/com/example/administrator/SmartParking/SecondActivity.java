@@ -71,7 +71,7 @@ public class SecondActivity extends AppCompatActivity {
                     return true;}
                 case R.id.navigation_notifications:{
                     mTextMessage.setText("hello!!");
-                    startScanLocation();
+
                     return true;}
             }
             return false;
